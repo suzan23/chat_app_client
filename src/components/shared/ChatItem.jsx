@@ -18,7 +18,11 @@ const ChatItem = ({
 }) => {
   return (
     <Link
-      sx={{ padding: "0" }}
+      sx={{
+        "&:hover": {
+          backgroundColor: "rgba(0,0,0,0.1)",
+        },
+      }}
       to={`/chat/${_id}`}
       onContextMenu={(e) => handleDeleteChat(e, _id, groupChat)}
     >
@@ -28,7 +32,7 @@ const ChatItem = ({
           gap: "1rem",
           alignItems: "center",
           padding: "1rem",
-          backgroundColor: sameSender ? "black" : "white",
+          backgroundColor: sameSender ? "black" : "unset",
           color: sameSender ? "white" : "unset",
           position: "relative",
         }}
