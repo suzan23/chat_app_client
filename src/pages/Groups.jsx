@@ -192,7 +192,6 @@ const Groups = () => {
             xs: "none",
             sm: "block",
           },
-          backgroundImage: bgGradient,
         }}
         size={{ sm: 4 }}
       >
@@ -287,7 +286,7 @@ const Groups = () => {
 
 const GroupsList = ({ w = "100%", myGroups = [], chatId }) => {
   return (
-    <Stack width={w}>
+    <Stack width={w} sx={{ backgroundImage: bgGradient, height: "100vh" }}>
       {myGroups.length > 0 ? (
         myGroups.map((group) => (
           <GroupListItem group={group} chatId={chatId} key={group._id} />

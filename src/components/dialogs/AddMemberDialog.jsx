@@ -24,16 +24,16 @@ const AddMemberDialog = ({ addMember, isLoadingAddMember, chatId }) => {
     console.log("close");
   };
   const addMemberSubmitHandler = () => {
-    console.log("added member");
     closeHandler();
+    console.log("added member");
   };
   return (
     <Dialog open>
       <Stack p={"2rem"} width={"20rem"} spacing={"2rem"}>
         <DialogTitle>Add Member</DialogTitle>
         <Stack spacing={"1rem"}>
-          {users_data.length > 0 ? (
-            users_data.map((item) => (
+          {members.length > 0 ? (
+            members.map((item) => (
               <UserItem
                 key={item?._id}
                 user={item}
