@@ -1,7 +1,8 @@
 import Grid from "@mui/material/Grid2";
-import React, { memo, useEffect, useState } from "react";
-import { matteBlack, orange } from "../constants/color";
+import React, { lazy, memo, Suspense, useEffect, useState } from "react";
+import { bgGradient, matteBlack, orange } from "../constants/color";
 import {
+  Backdrop,
   Box,
   Button,
   Drawer,
@@ -22,15 +23,22 @@ import {
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Link } from "../components/styles/StyledComponents";
 import AvatarCard from "../components/shared/AvatarCard";
-import { sampleChats } from "../constants/sampleData";
-
+import { sampleChats, users_data } from "../constants/sampleData";
+import UserItem from "../components/shared/UserItem";
+const ConfirmDeleteDialog = lazy(() =>
+  import("../components/dialogs/ConfirmDeleteDialog")
+);
+const AddMemberDialog = lazy(() =>
+  import("../components/dialogs/AddMemberDialog")
+);
 const Groups = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [groupNameUpdatedValue, setGroupNameUpdatedValue] = useState("");
   const navigate = useNavigate();
-  const chatId = useSearchParams()[0].get("group");
+  const isAddMember = false;
+  const chatId = useSearchParams()[0].get("group") || "";
   const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false);
   const navigateBack = () => {
     navigate("/");
@@ -54,15 +62,24 @@ const Groups = () => {
 
   const closeConfirmDeleteHandler = () => {
     setConfirmDeleteDialog(false);
-    console.log("delete");
   };
 
   const openAddMemberHandler = () => {
     console.log("add");
   };
+  const deleteHandler = () => {
+    console.log("delete");
+    closeConfirmDeleteHandler();
+  };
+  const removeMemberHandler = (id) => {
+    console.log("remove", id);
+  };
+
   useEffect(() => {
-    setGroupName(`Group Name ${chatId}`);
-    setGroupNameUpdatedValue(`Group Name ${chatId}`);
+    if (chatId) {
+      setGroupName(`Group Name ${chatId}`);
+      setGroupNameUpdatedValue(`Group Name ${chatId}`);
+    }
     return () => {
       setGroupName("");
       setGroupNameUpdatedValue("");
@@ -175,8 +192,8 @@ const Groups = () => {
             xs: "none",
             sm: "block",
           },
+          backgroundImage: bgGradient,
         }}
-        bgcolor={"bisque"}
         size={{ sm: 4 }}
       >
         <GroupsList myGroups={sampleChats} chatId={chatId} />
@@ -192,7 +209,7 @@ const Groups = () => {
         }}
       >
         {IconBtns}
-        {groupName && (
+        {groupName !== "" && (
           <>
             {GroupName}
             <Typography
@@ -212,18 +229,46 @@ const Groups = () => {
                 md: "1rem 4rem",
               }}
               spacing={"2rem"}
-              bgcolor={"bisque"}
+              // bgcolor={"bisque"}
               height={"50vh"}
               overflow={"auto"}
             >
               {/*members  */}
+              {users_data.map((user) => (
+                <UserItem
+                  user={user}
+                  key={user?._id}
+                  isAdded
+                  styling={{
+                    boxShadow: "0 0 0.5rem rgba(0,0,0,0.2)",
+                    padding: "1rem 2rem",
+                    borderRadius: "1rem",
+                  }}
+                  handler={removeMemberHandler}
+                />
+              ))}
             </Stack>
             {ButtonGroup}
           </>
         )}
         {/* Group details */}
       </Grid>
-      {confirmDeleteDialog && <>ddsj</>}
+
+      {isAddMember && (
+        <Suspense fallback={<Backdrop open />}>
+          <AddMemberDialog />
+        </Suspense>
+      )}
+
+      {confirmDeleteDialog && (
+        <Suspense fallback={<Backdrop open />}>
+          <ConfirmDeleteDialog
+            open={confirmDeleteDialog}
+            handleClose={closeConfirmDeleteHandler}
+            deleteHandler={deleteHandler}
+          />
+        </Suspense>
+      )}
       <Drawer
         open={isMobileMenuOpen}
         onClose={handleMobileClose}
